@@ -1,32 +1,99 @@
-package pertemuan4;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.*;
 
-public class Pertemuan4 extends JFrame {
+public class Gnf4 extends JFrame {
 
-    public Pertemuan4() {
+    JTextField txtNim, txtNama, txtSemester, txtKelas;
+    JButton btnTambah;
+    JTable table;
+    DefaultTableModel model;
 
-        setTitle("JTable Simple");
-        setSize(400, 300);
+    public Gnf4() {
+        setTitle("Data Mahasiswa");
+        setSize(500, 400);
+        setLayout(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
 
-        DefaultTableModel model = new DefaultTableModel();
+        // LABEL
+        JLabel lNim = new JLabel("NIM");
+        lNim.setBounds(20, 20, 80, 25);
+        add(lNim);
 
+        JLabel lNama = new JLabel("Nama");
+        lNama.setBounds(20, 50, 80, 25);
+        add(lNama);
+
+        JLabel lSemester = new JLabel("Semester");
+        lSemester.setBounds(20, 80, 80, 25);
+        add(lSemester);
+
+        JLabel lKelas = new JLabel("Kelas");
+        lKelas.setBounds(20, 110, 80, 25);
+        add(lKelas);
+
+        // TEXTFIELD
+        txtNim = new JTextField();
+        txtNim.setBounds(100, 20, 150, 25);
+        add(txtNim);
+
+        txtNama = new JTextField();
+        txtNama.setBounds(100, 50, 150, 25);
+        add(txtNama);
+
+        txtSemester = new JTextField();
+        txtSemester.setBounds(100, 80, 150, 25);
+        add(txtSemester);
+
+        txtKelas = new JTextField();
+        txtKelas.setBounds(100, 110, 150, 25);
+        add(txtKelas);
+
+        // BUTTON
+        btnTambah = new JButton("Tambah");
+        btnTambah.setBounds(100, 150, 100, 30);
+        add(btnTambah);
+
+        // TABLE
+        model = new DefaultTableModel();
+        table = new JTable(model);
+
+        JScrollPane scroll = new JScrollPane(table);
+        scroll.setBounds(20, 200, 440, 130);
+        add(scroll);
+
+        // KOLOM
         model.addColumn("NIM");
         model.addColumn("Nama");
+        model.addColumn("Semester");
+        model.addColumn("Kelas");
 
-        model.addRow(new Object[]{"101", "Galih"});
-        model.addRow(new Object[]{"102", "Naufal"});
-        model.addRow(new Object[]{"102", "Faturrohman"});
-        
-        JTable table = new JTable(model);
+        // EVENT BUTTON
+        btnTambah.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
 
-        add(new JScrollPane(table));
+                if (txtNim.getText().isEmpty() || txtNama.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Data tidak boleh kosong!");
+                    return;
+                }
+
+                model.addRow(new Object[]{
+                    txtNim.getText(),
+                    txtNama.getText(),
+                    txtSemester.getText(),
+                    txtKelas.getText()
+                });
+
+                // Reset form
+                txtNim.setText("");
+                txtNama.setText("");
+                txtSemester.setText("");
+                txtKelas.setText("");
+            }
+        });
     }
 
     public static void main(String[] args) {
-        new Pertemuan4().setVisible(true);
+        new Zulyanppp4().setVisible(true);
     }
 }
