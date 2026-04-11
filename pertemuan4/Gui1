@@ -1,0 +1,32 @@
+package pertemuan4;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
+public class Pertemuan4 extends JFrame {
+
+    public Pertemuan4() {
+
+        setTitle("JTable Simple");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        DefaultTableModel model = new DefaultTableModel();
+
+        model.addColumn("NIM");
+        model.addColumn("Nama");
+
+        model.addRow(new Object[]{"101", "Galih"});
+        model.addRow(new Object[]{"102", "Naufal"});
+        model.addRow(new Object[]{"102", "Faturrohman"});
+        
+        JTable table = new JTable(model);
+
+        add(new JScrollPane(table));
+    }
+
+    public static void main(String[] args) {
+        new Pertemuan4().setVisible(true);
+    }
+}
