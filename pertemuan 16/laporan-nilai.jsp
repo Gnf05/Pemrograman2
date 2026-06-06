@@ -5,7 +5,7 @@
 
 <main class='main-content'>
     <div class="topbar">
-        <div class="title-kampus">Sistem Administrasi Nilai</div>
+        <div class="title-kampus">Administrasi Nilai</div>
         <div class="subtitle">Universitas Pamulang</div>
     </div>
     
