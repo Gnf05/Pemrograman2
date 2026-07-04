@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GNF HOTEL - Enterprise Property Management System Console</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        :root {
+            --gnf-bg-core: #090d16;
+            --gnf-bg-nav: #0f172a;
+            --gnf-brand-blue: #38bdf8;
+            --gnf-brand-orange: #ff6b21;
+            --gnf-text-light: #ffffff;
+            --gnf-glass-border: rgba(255, 255, 255, 0.2);
+            --gnf-neon-green: #4ade80;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--gnf-bg-core);
+            color: var(--gnf-text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .gnf-sidebar-wrapper {
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: var(--gnf-bg-nav);
+            border-right: 2px solid var(--gnf-glass-border);
+            z-index: 1000;
+            padding: 25px 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .gnf-brand-container {
+            padding: 0 10px 20px 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+            margin-bottom: 20px;
+        }
+
+        .gnf-brand-text { font-size: 1.4rem; font-weight: 800; color: #ffffff; }
+        .gnf-brand-text span { color: var(--gnf-brand-blue); }
+        .gnf-menu-nav-list { flex-grow: 1; }
+        .gnf-section-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: #64748b; padding: 12px 10px 6px 10px; display: block; }
+        
+        .gnf-sidebar-btn {
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 10px;
+            margin-bottom: 4px;
+            transition: all 0.25s ease;
+        }
+
+        .gnf-sidebar-btn i { width: 22px; font-size: 1.1rem; margin-right: 8px; }
+        .gnf-sidebar-btn:hover, .gnf-sidebar-btn.active { color: #ffffff; background: linear-gradient(90deg, rgba(56, 189, 248, 0.15) 0%, transparent 100%); border-left: 4px solid var(--gnf-brand-blue); }
+
+        .gnf-main-workspace { margin-left: 260px; padding: 40px; min-height: 100vh; background: radial-gradient(circle at 90% 10%, rgba(56, 189, 248, 0.05), transparent 40%); }
+        .gnf-card-container { background: #1e293b; border: 2px solid var(--gnf-glass-border); border-radius: 16px; padding: 28px !important; box-shadow: 0 20px 30px rgba(0, 0, 0, 0.5); margin-bottom: 25px; }
+        .gnf-form-title-label { font-size: 0.82rem; font-weight: 700; color: #f1f5f9; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: block; }
+        
+        .gnf-form-input {
+            width: 100%;
+            background-color: #0f172a !important;
+            border: 2px solid #64748b !important;
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .gnf-form-input:focus { border-color: var(--gnf-brand-blue) !important; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.4) !important; }
+        .gnf-billing-engine-widget { background-color: #020617; border: 2px solid #38bdf8; border-radius: 12px; padding: 20px; box-shadow: inset 0 0 15px rgba(56, 189, 248, 0.15); }
+        .gnf-billing-title { color: var(--gnf-brand-blue); font-weight: 800; font-size: 0.85rem; text-transform: uppercase; }
+        .gnf-billing-value-highlight { font-size: 1.6rem; font-weight: 800; color: var(--gnf-neon-green); font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 10px rgba(74, 222, 128, 0.3); }
+
+        .gnf-checkbox-wrapper { background: #0f172a; border: 2px solid #475569; border-radius: 10px; padding: 12px 15px; margin-bottom: 12px; display: flex; align-items: center; cursor: pointer; }
+        .gnf-checkbox-wrapper input { width: 18px; height: 18px; margin-right: 12px; }
+
+        .gnf-table-wrapper { width: 100%; margin: 0; }
+        .gnf-table-wrapper th { background-color: #0f172a !important; color: #cbd5e1 !important; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; padding: 16px 14px; border-bottom: 2px solid #334155 !important; }
+        .gnf-table-wrapper td { padding: 16px 14px; color: #ffffff; font-weight: 700; font-size: 0.92rem; border-bottom: 1px solid #334155 !important; }
+
+        .gnf-action-button-orange { background: linear-gradient(135deg, #ff6b21 0%, #e04f00 100%); color: #ffffff; font-weight: 800; font-size: 1rem; border: none; padding: 16px; border-radius: 10px; width: 100%; box-shadow: 0 6px 15px rgba(255, 107, 33, 0.3); }
+        .gnf-badge-marker { font-size: 0.75rem; font-weight: 800; padding: 6px 12px; border-radius: 6px; }
+        .gnf-badge-suite { background-color: #f59e0b; color: #000000; }
+        .gnf-badge-deluxe { background-color: #10b981; color: #000000; }
+        .gnf-badge-standard { background-color: #0ea5e9; color: #ffffff; }
+    </style>
+</head>
+<body>
+
+    <div class="gnf-sidebar-wrapper">
+        <div class="gnf-menu-nav-list">
+            <div class="gnf-brand-container">
+                <div class="gnf-brand-text">
+                    <i class="fa-solid fa-plane-departure text-warning me-2"></i>GNF<span>HOTEL</span>
+                </div>
+                <small class="text-muted font-monospace" style="font-size: 0.65rem;">MANAGEMENT CORE V4.2</small>
+            </div>
+            
+            <span class="gnf-section-label">Main Console</span>
+            <a th:href="@{/}" th:classappend="${activePage == 'dashboard'} ? 'active'" class="gnf-sidebar-btn"><i class="fa-solid fa-chart-pie"></i> Operation Dashboard</a>
+            <a th:href="@{/status-log}" th:classappend="${activePage == 'logKamar'} ? 'active'" class="gnf-sidebar-btn"><i class="fa-solid fa-folder-tree"></i> Room Audit Logs</a>
+            
+            <span class="gnf-section-label">Relational Data</span>
+            <a th:href="@{/sql-management}" th:classappend="${activePage == 'sqlManage'} ? 'active'" class="gnf-sidebar-btn"><i class="fa-solid fa-terminal"></i> Database Terminal</a>
+        </div>
+        <div class="gnf-sidebar-footer">
+            <div class="p-2 rounded text-center" style="background-color: rgba(0, 0, 0, 0.4); border: 1px solid var(--gnf-glass-border);">
+                <span class="d-block text-muted font-monospace" style="font-size: 0.65rem;">PORT CHANNEL</span>
+                <span class="text-info fw-bold font-monospace" style="font-size: 0.85rem;">LOCALHOST:8585</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="gnf-main-workspace">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-2 border-secondary border-opacity-20">
+            <div>
+                <h2 class="fw-extrabold text-white m-0" th:text="${activePage == 'dashboard'} ? 'Enterprise Operation Dashboard' : (${activePage == 'logKamar'} ? 'Room Real-Time Audit Logs' : 'Native Database Connector Engine')"></h2>
+                <p class="text-info small m-0 mt-1" style="font-weight: 600;">Sistem Komputasi Terdistribusi Basis Data Relasional - Universitas Pamulang</p>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <a th:if="${activePage == 'dashboard'}" th:href="@{/reset-database}" class="btn btn-danger fw-bold d-flex align-items-center px-3" style="border-radius: 10px;" onclick="return confirm('⚠️ RESET ALL RECORDS?')"><i class="fa-solid fa-dumpster-fire me-2"></i> Purge Tables</a>
+                <div class="bg-dark text-white px-3 py-2 rounded-3 fw-bold border-2 border-secondary d-flex align-items-center small shadow-sm">
+                    Active Records: &nbsp;<span class="text-info font-monospace fw-bold" th:text="${totalKamar}">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${activePage == 'dashboard'}">
+            
+            <div th:if="${errorMessage}" class="alert alert-danger p-3 mb-4 rounded-3 border-0 d-flex align-items-start" style="background-color: #450a0a; border-left: 6px solid #ef4444 !important;">
+                <i class="fa-solid fa-triangle-exclamation fs-4 me-3 text-danger mt-1"></i>
+                <div>
+                    <strong class="text-danger d-block mb-1 fw-bold">Business Logic Exception Raised!</strong>
+                    <span class="text-white font-monospace small fw-bold" th:text="${errorMessage}"></span>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-xl-5 col-md-6">
+                    <div class="card gnf-card-container shadow-lg">
+                        <h5 class="fw-bold text-info mb-3 pb-2 border-bottom border-2 border-secondary border-opacity-30"><i class="fa-solid fa-address-card me-2"></i>Manifest Booking Form</h5>
+                        
+                        <form th:action="@{/pesan}" th:object="${reservasi}" method="post">
+                            <div class="mb-3">
+                                <label class="gnf-form-title-label">Identitas Nama Lengkap Tamu (KTP)</label>
+                                <input type="text" th:field="*{namaTamu}" class="gnf-form-input" placeholder="Ketik nama lengkap..." required />
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="gnf-form-title-label">Klasifikasi Layanan Kamar</label>
+                                <select th:field="*{tipeKamar}" id="tipeKamarField" class="gnf-form-input form-select">
+                                    <option value="Standard">Standard Premium Unit (Rp 350k)</option>
+                                    <option value="Deluxe">Deluxe Horizon Suite (Rp 650k)</option>
+                                    <option value="Suite">Suite Luxury VIP Unit (Rp 1.250k)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <label class="gnf-form-title-label">Check-In</label>
+                                    <input type="date" th:field="*{tanggalCheckIn}" id="checkInDateField" class="gnf-form-input" required />
+                                </div>
+                                <div class="col-6">
+                                    <label class="gnf-form-title-label">Check-Out</label>
+                                    <input type="date" th:field="*{tanggalCheckOut}" id="checkOutDateField" class="gnf-form-input" required />
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="gnf-form-title-label">Fasilitas Tambahan (UAS Add-on)</label>
+                                <label class="gnf-checkbox-wrapper">
+                                    <input type="checkbox" name="chkBreakfast" id="addBreakfast" value="Breakfast">
+                                    <div><span class="text-white fw-bold d-block" style="font-size:0.88rem;">Include Daily Breakfast</span><small class="text-muted font-monospace">+Rp 75.000 /night</small></div>
+                                </label>
+                                <label class="gnf-checkbox-wrapper">
+                                    <input type="checkbox" name="chkExtraBed" id="addExtraBed" value="Extra Bed">
+                                    <div><span class="text-white fw-bold d-block" style="font-size:0.88rem;">Include Extra Bedding Unit</span><small class="text-muted font-monospace">+Rp 150.000 /night</small></div>
+                                </label>
+                            </div>
+
+                            <div class="gnf-billing-engine-widget mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-secondary border-opacity-40">
+                                    <span class="gnf-billing-title">Durasi Tinggal</span>
+                                    <span class="fw-bold font-monospace text-white" id="nightsOutputNode" style="font-size:1.1rem;">0 Nights</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="gnf-billing-title text-muted">Diskon Korporat (&gt;5 Malam)</span>
+                                    <span class="fw-bold font-monospace text-danger" id="discountOutputNode" style="font-size:0.95rem;">Rp 0 (0%)</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <span class="gnf-billing-title" style="font-size:0.95rem;">Total Estimasi Biaya</span>
+                                    <span class="gnf-billing-value-highlight" id="totalCostOutputNode">Rp 0</span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="gnf-action-button-orange"><i class="fa-solid fa-server me-2"></i>Commit & Save ke MySQL</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-xl-7 col-md-6">
+                    <div class="card gnf-card-container shadow-lg">
+                        <h5 class="fw-bold text-info mb-3 pb-2 border-bottom border-2 border-secondary border-opacity-30"><i class="fa-solid fa-network-wired me-2"></i>Active Relational Ledger</h5>
+                        
+                        <div class="table-responsive">
+                            <table class="table gnf-table-wrapper align-middle table-dark table-borderless m-0">
+                                <thead>
+                                    <tr>
+                                        <th>INDEX ID</th>
+                                        <th>NAMA TAMU / FASILITAS</th>
+                                        <th>ROOM CLASS</th>
+                                        <th class="text-center">DURASI & TAGIHAN</th>
+                                        <th class="text-center">AKSI</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="res : ${daftarReservasi}">
+                                        <td class="font-monospace fw-bold text-info" th:text="'#GNF-' + ${res.id}"></td>
+                                        <td>
+                                            <span class="fw-bold text-white d-block" th:text="${res.namaTamu}"></span>
+                                            <small class="text-warning font-monospace small" th:text="'Pack: ' + ${res.fasilitasTambahan}"></small>
+                                        </td>
+                                        <td>
+                                            <span th:if="${res.tipeKamar == 'Suite'}" class="gnf-badge-marker gnf-badge-suite">SUITE VIP</span>
+                                            <span th:if="${res.tipeKamar == 'Deluxe'}" class="gnf-badge-marker gnf-badge-deluxe">DELUXE</span>
+                                            <span th:if="${res.tipeKamar == 'Standard'}" class="gnf-badge-marker gnf-badge-standard">STANDARD</span>
+                                        </td>
+                                        <td class="text-center font-monospace">
+                                            <span class="text-white fw-bold d-block" style="font-size:0.85rem;" th:text="${res.totalMalam} + ' Malam'"></span >
+                                            <span class="text-success fw-bold d-block mt-1" style="font-size:0.9rem;" th:text="'Rp ' + ${#numbers.formatInteger(res.totalBiaya, 0, 'POINT')}"></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <a th:href="@{'/hapus/' + ${res.id}}" class="btn btn-sm btn-danger px-2 py-1" onclick="return confirm('Drop tuple permanently?')"><i class="fa-solid fa-trash-can"></i></a>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(daftarReservasi)}">
+                                        <td colspan="5" class="text-center py-5 text-muted font-monospace">No structural data records synced in MySQL store.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${activePage == 'logKamar'}" class="card gnf-card-container shadow-lg">
+            <h5 class="fw-bold text-info mb-2"><i class="fa-solid fa-building-shield me-2"></i>Internal Property Cryptographic Audit Manifest</h5>
+            <table class="table gnf-table-wrapper table-dark table-borderless m-0">
+                <thead>
+                    <tr>
+                        <th>IMMUTABLE SEGMENT ARCHIVE ID KEY</th>
+                        <th>ENTITY IDENTIFIER IDENTIFICATION</th>
+                        <th>TOTAL MALAM</th>
+                        <th>TOTAL BIAYA AKHIR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="res : ${daftarReservasi}">
+                        <td th:text="'#SECURE-BLOCK-HASH-' + ${res.id}" class="fw-bold font-monospace text-warning small"></td>
+                        <td th:text="${res.namaTamu}" class="text-white fw-bold"></td>
+                        <td th:text="${res.totalMalam} + ' Nights'" class="text-light"></td>
+                        <td th:text="'Rp ' + ${#numbers.formatInteger(res.totalBiaya, 0, 'POINT')}" class="text-success fw-bold"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:if="${activePage == 'sqlManage'}" class="card gnf-card-container shadow-lg font-monospace" style="background-color: #050811 !important;">
+            <h5 class="text-success mb-4"><i class="fa-solid fa-terminal me-2"></i>MySQL JDBC Native Driver Interceptor Logs</h5>
+            <div class="p-3 bg-black bg-opacity-40 rounded text-light small border border-secondary border-opacity-10" style="line-height: 2.2; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;">
+                <p class="text-success m-0">[JDBC HUB] Socket instance bound dynamically on localhost target endpoint port 3306.</p>
+                <p class="text-success m-0">[JPA SYNCHRONIZER] Parsed relational structural table definition reference data block metadata.</p>
+                <p class="text-warning m-0">[SPRING BOOT EMBEDDED ENGINE] Virtual thread servlet workers pooling channel active on port 8585.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const checkInTargetNode = document.getElementById('checkInDateField');
+        const checkOutTargetNode = document.getElementById('checkOutDateField');
+        const selectKamarTargetNode = document.getElementById('tipeKamarField');
+        const checkBreakfastNode = document.getElementById('addBreakfast');
+        const checkExtraBedNode = document.getElementById('addExtraBed');
+        
+        const labelNightsTargetNode = document.getElementById('nightsOutputNode');
+        const labelDiscountTargetNode = document.getElementById('discountOutputNode');
+        const labelCostTargetNode = document.getElementById('totalCostOutputNode');
+
+        function runLiveCalculationPipelineWorker() {
+            if (checkInTargetNode.value && checkOutTargetNode.value) {
+                const parseDateIn = new Date(checkInTargetNode.value);
+                const parseDateOut = new Date(checkOutTargetNode.value);
+                
+                const computeTimeDifference = parseDateOut.getTime() - parseDateIn.getTime();
+                const computeDaysDifference = Math.ceil(computeTimeDifference / (1000 * 3600 * 24));
+                
+                if (computeDaysDifference > 0) {
+                    let rateValuePerNightMatrix = 350000;
+                    if (selectKamarTargetNode.value === 'Deluxe') rateValuePerNightMatrix = 650000;
+                    if (selectKamarTargetNode.value === 'Suite') rateValuePerNightMatrix = 1250000;
+                    
+                    let extraFacilityCost = 0;
+                    if (checkBreakfastNode && checkBreakfastNode.checked) extraFacilityCost += 75000;
+                    if (checkExtraBedNode && checkExtraBedNode.checked) extraFacilityCost += 150000;
+                    
+                    let subTotalKamarDanFasilitas = (rateValuePerNightMatrix + extraFacilityCost) * computeDaysDifference;
+                    
+                    let discountValue = 0;
+                    if (computeDaysDifference > 5) {
+                        discountValue = subTotalKamarDanFasilitas * 0.10;
+                        labelDiscountTargetNode.innerText = `Rp ${discountValue.toLocaleString('id-ID')} (10%)`;
+                        labelDiscountTargetNode.style.color = "#4ade80";
+                    } else {
+                        labelDiscountTargetNode.innerText = `Rp 0 (0%)`;
+                        labelDiscountTargetNode.style.color = "#94a3b8";
+                    }
+                    
+                    const aggregateFinalCostValue = subTotalKamarDanFasilitas - discountValue;
+                    
+                    labelNightsTargetNode.innerText = `${computeDaysDifference} Nights`;
+                    labelCostTargetNode.innerText = 'Rp ' + aggregateFinalCostValue.toLocaleString('id-ID');
+                } else {
+                    labelNightsTargetNode.innerText = '0 Nights';
+                    labelDiscountTargetNode.innerText = 'Rp 0 (0%)';
+                    labelCostTargetNode.innerText = 'Rp 0';
+                }
+            }
+        }
+
+        if(checkInTargetNode) {
+            checkInTargetNode.addEventListener('change', runLiveCalculationPipelineWorker);
+            checkOutTargetNode.addEventListener('change', runLiveCalculationPipelineWorker);
+            selectKamarTargetNode.addEventListener('change', runLiveCalculationPipelineWorker);
+            checkBreakfastNode.addEventListener('change', runLiveCalculationPipelineWorker);
+            checkExtraBedNode.addEventListener('change', runLiveCalculationPipelineWorker);
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
